@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Remnants of Light</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a1a;
+      --panel: rgba(13, 13, 36, 0.88);
+      --panel-2: rgba(20, 20, 48, 0.92);
+      --line: rgba(125, 92, 255, 0.28);
+      --text: #eff0ff;
+      --muted: #a7abcf;
+      --purple: #a56bff;
+      --teal: #39d6d0;
+      --gold: #f3c96b;
+      --danger: #ff6b8b;
+      --success: #53f0a9;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(165, 107, 255, 0.18), transparent 25%),
+        radial-gradient(circle at 80% 20%, rgba(57, 214, 208, 0.12), transparent 22%),
+        radial-gradient(circle at 70% 80%, rgba(243, 201, 107, 0.08), transparent 24%),
+        linear-gradient(180deg, #090918 0%, #0a0a1a 50%, #070713 100%);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+        radial-gradient(rgba(255,255,255,0.35) 1px, transparent 1px);
+      background-position: 0 0, 18px 18px;
+      background-size: 36px 36px;
+      opacity: 0.08;
+      mix-blend-mode: screen;
+    }
+    .app { position: relative; z-index: 1; min-height: 100vh; padding: 24px; }
+    .shell { display: grid; grid-template-rows: auto auto 1fr; gap: 18px; max-width: 1600px; margin: 0 auto; }
+    .header {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+      padding: 22px 24px;
+      background: linear-gradient(180deg, rgba(18,18,44,.95), rgba(12,12,28,.9));
+      border: 1px solid var(--line); border-radius: 28px; box-shadow: var(--shadow); backdrop-filter: blur(14px);
+    }
+    .brand h1 { margin: 0; font-family: 'Cinzel', serif; letter-spacing: 0.26em; font-size: clamp(20px,3vw,38px); background: linear-gradient(135deg, #fff 30%, var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .brand p { margin: 4px 0 0; font-size: 13px; color: var(--muted); letter-spacing: 0.12em; }
+    .hright { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+    .ap-badge { padding: 8px 16px; background: rgba(165,107,255,0.15); border: 1px solid rgba(165,107,255,0.35); border-radius: 50px; font-size: 13px; font-weight: 600; color: var(--purple); }
+    .day-badge { padding: 8px 16px; background: rgba(243,201,107,0.12); border: 1px solid rgba(243,201,107,0.3); border-radius: 50px; font-size: 13px; font-weight: 600; color: var(--gold); }
+    .btn-end { padding: 10px 22px; background: linear-gradient(135deg, var(--purple), #7c3aed); border: none; border-radius: 50px; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; transition: all .2s; box-shadow: 0 4px 18px rgba(165,107,255,0.35); }
+    .btn-end:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(165,107,255,0.5); }
+    .statsbar { display: flex; gap: 12px; flex-wrap: wrap; }
+    .stat { flex: 1; min-width: 100px; padding: 14px 18px; background: rgba(13,13,36,0.88); border: 1px solid var(--line); border-radius: 16px; backdrop-filter: blur(12px); }
+    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+    .stat-value { font-size: 22px; font-weight: 800; }
+    .body { display: grid; grid-template-columns: 1fr 280px; gap: 18px; }
+    .main { display: flex; flex-direction: column; gap: 14px; }
+    .tabbar { display: flex; gap: 8px; padding: 6px; background: rgba(13,13,36,0.88); border: 1px solid var(--line); border-radius: 18px; backdrop-filter: blur(12px); flex-wrap: wrap; }
+    .tab { flex: 1; min-width: 80px; padding: 10px 14px; background: transparent; border: none; border-radius: 12px; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; white-space: nowrap; }
+    .tab:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+    .tab.active { background: linear-gradient(135deg, rgba(165,107,255,0.25), rgba(57,214,208,0.15)); color: #fff; box-shadow: 0 2px 12px rgba(165,107,255,0.2); }
+    .panels { flex: 1; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .panel-placeholder { padding: 60px 40px; text-align: center; background: rgba(13,13,36,0.88); border: 1px solid var(--line); border-radius: 22px; color: var(--muted); font-size: 15px; }
+    .panel-placeholder .icon { font-size: 48px; margin-bottom: 16px; }
+    .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+    .product { background: rgba(13,13,36,0.88); border: 1px solid var(--line); border-radius: 18px; padding: 18px; backdrop-filter: blur(12px); transition: all .25s; cursor: pointer; }
+    .product:hover { transform: translateY(-4px); border-color: rgba(165,107,255,0.5); box-shadow: 0 12px 32px rgba(165,107,255,0.2); }
+    .product-icon { font-size: 36px; margin-bottom: 10px; }
+    .product-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .product-price { font-size: 18px; font-weight: 800; color: var(--gold); margin-bottom: 10px; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 50px; font-size: 11px; font-weight: 700; margin-bottom: 10px; }
+    .badge-live { background: rgba(83,240,169,0.15); color: var(--success); border: 1px solid rgba(83,240,169,0.3); }
+    .badge-out { background: rgba(255,107,139,0.15); color: var(--danger); border: 1px solid rgba(255,107,139,0.3); }
+    .badge-soon { background: rgba(165,107,255,0.15); color: var(--purple); border: 1px solid rgba(165,107,255,0.3); }
+    .btn-action { width: 100%; padding: 8px; background: rgba(165,107,255,0.12); border: 1px solid rgba(165,107,255,0.3); border-radius: 10px; color: var(--purple); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; }
+    .btn-action:hover { background: rgba(165,107,255,0.25); }
+    .sidebar { display: flex; flex-direction: column; gap: 14px; }
+    .sidecard { background: rgba(13,13,36,0.88); border: 1px solid var(--line); border-radius: 22px; padding: 18px; backdrop-filter: blur(12px); }
+    .sidecard h3 { margin: 0 0 14px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+    .feed { display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto; }
+    .log-item { padding: 10px 12px; background: rgba(20,20,48,0.92); border: 1px solid var(--line); border-radius: 12px; font-size: 12px; line-height: 1.5; animation: fadeIn .4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    .quick-actions { display: flex; flex-direction: column; gap: 8px; }
+    .qa-btn { padding: 10px 14px; background: rgba(20,20,48,0.92); border: 1px solid var(--line); border-radius: 12px; color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; text-align: left; }
+    .qa-btn:hover { border-color: rgba(165,107,255,0.5); background: rgba(165,107,255,0.1); }
+    @media (max-width: 900px) { .body { grid-template-columns: 1fr; } .sidebar { display: none; } }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="shell">
+    <header class="header">
+      <div class="brand">
+        <h1>REMNANTS OF LIGHT</h1>
+        <p>Hidden in nature. Written in the stars.</p>
+      </div>
+      <div class="hright">
+        <div class="ap-badge">⚡ <span id="apCount">10</span> AP</div>
+        <div class="day-badge">🌙 Day <span id="dayCount">1</span></div>
+        <button class="btn-end" id="endDayBtn">End Day →</button>
+      </div>
+    </header>
+    <div class="statsbar">
+      <div class="stat"><div class="stat-label">💰 Revenue</div><div class="stat-value" id="statRevenue">$0</div></div>
+      <div class="stat"><div class="stat-label">📦 Orders</div><div class="stat-value" id="statOrders">0</div></div>
+      <div class="stat"><div class="stat-label">🛍️ Products</div><div class="stat-value" id="statProducts">0</div></div>
+      <div class="stat"><div class="stat-label">👁️ Visitors</div><div class="stat-value" id="statVisitors">0</div></div>
+      <div class="stat"><div class="stat-label">📈 Trend</div><div class="stat-value" id="statTrend">0</div></div>
+    </div>
+    <div class="body">
+      <div class="main">
+        <div class="tabbar">
+          <button class="tab active" data-tab="store">🏪 Store</button>
+          <button class="tab" data-tab="inventory">📦 Inventory</button>
+          <button class="tab" data-tab="marketing">📣 Marketing</button>
+          <button class="tab" data-tab="analytics">📊 Analytics</button>
+          <button class="tab" data-tab="design">🎨 Design</button>
+          <button class="tab" data-tab="settings">⚙️ Settings</button>
+        </div>
+        <div class="panels">
+          <div class="panel active" id="storePanel"><div class="store-grid" id="storeGrid"></div></div>
+          <div class="panel" id="inventoryPanel"><div class="panel-placeholder"><div class="icon">📦</div>Inventory management coming in Stage 2.</div></div>
+          <div class="panel" id="marketingPanel"><div class="panel-placeholder"><div class="icon">📣</div>Ad campaigns and promotions coming in Stage 2.</div></div>
+          <div class="panel" id="analyticsPanel"><div class="panel-placeholder"><div class="icon">📊</div>Revenue charts and analytics coming in Stage 2.</div></div>
+          <div class="panel" id="designPanel"><div class="panel-placeholder"><div class="icon">🎨</div>Product design studio coming in Stage 2.</div></div>
+          <div class="panel" id="settingsPanel"><div class="panel-placeholder"><div class="icon">⚙️</div>Settings and integrations coming in Stage 2.</div></div>
+        </div>
+      </div>
+      <div class="sidebar">
+        <div class="sidecard">
+          <h3>🔔 Live Feed</h3>
+          <div class="feed" id="feed"></div>
+        </div>
+        <div class="sidecard">
+          <h3>⚡ Quick Actions</h3>
+          <div class="quick-actions">
+            <button class="qa-btn" onclick="doAction('post')">📸 Post on Instagram</button>
+            <button class="qa-btn" onclick="doAction('tiktok')">🎵 Post on TikTok</button>
+            <button class="qa-btn" onclick="doAction('email')">📧 Send Email Blast</button>
+            <button class="qa-btn" onclick="doAction('restock')">📦 Restock Product</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const zodiac = [
+    ['♈','Aries Hoodie',67,'Out of Stock'],
+    ['♉','Taurus Hoodie',67,'Coming Soon'],
+    ['♊','Gemini Hoodie',67,'Coming Soon'],
+    ['♋','Cancer Hoodie',67,'Coming Soon'],
+    ['♌','Leo Hoodie',67,'Coming Soon'],
+    ['♍','Virgo Hoodie',67,'Coming Soon'],
+    ['♎','Libra Hoodie',67,'Coming Soon'],
+    ['♏','Scorpio Hoodie',67,'Coming Soon'],
+    ['♐','Sagittarius Hoodie',67,'Coming Soon'],
+    ['♑','Capricorn Hoodie',67,'Coming Soon'],
+    ['♒','Aquarius Hoodie',67,'Coming Soon'],
+    ['♓','Pisces Hoodie',67,'Coming Soon']
+  ];
+
+  let state = JSON.parse(localStorage.getItem('rol_state') || 'null') || {
+    day:1, ap:10, revenue:0, orders:0, visitors:0, trend:0, notes:[]
+  };
+
+  function save() { localStorage.setItem('rol_state', JSON.stringify(state)); }
+
+  function renderStats() {
+    document.getElementById('apCount').textContent = state.ap;
+    document.getElementById('dayCount').textContent = state.day;
+    document.getElementById('statRevenue').textContent = '$' + state.revenue.toLocaleString();
+    document.getElementById('statOrders').textContent = state.orders;
+    document.getElementById('statProducts').textContent = zodiac.filter(z => z[2] === 'Live').length;
+    document.getElementById('statVisitors').textContent = state.visitors;
+    document.getElementById('statTrend').textContent = state.trend;
+  }
+
+  function addNote(msg) {
+    const feed = document.getElementById('feed');
+    const el = document.createElement('div');
+    el.className = 'log-item';
+    el.textContent = msg;
+    feed.prepend(el);
+    state.notes.unshift(msg);
+    if (state.notes.length > 20) state.notes.pop();
+    save();
+  }
+
+  function renderStore() {
+    const grid = document.getElementById('storeGrid');
+    grid.innerHTML = '';
+    zodiac.forEach(([icon, name, price, status]) => {
+      const badgeClass = status === 'Live' ? 'badge-live' : status === 'Out of Stock' ? 'badge-out' : 'badge-soon';
+      const card = document.createElement('div');
+      card.className = 'product';
+      card.innerHTML = `
+        <div class="product-icon">${icon}</div>
+        <div class="product-name">${name}</div>
+        <div class="product-price">$${price}</div>
+        <div class="badge ${badgeClass}">${status}</div>
+        <button class="btn-action">Manage →</button>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(tab + 'Panel').classList.add('active');
+  }
+
+  function doAction(type) {
+    if (state.ap <= 0) return addNote('⛔ No AP left — end the day to recharge.');
+    state.ap--;
+    const msgs = {
+      post: '📸 Instagram post published! Engagement incoming.',
+      tiktok: '🎵 TikTok posted! The algorithm is watching.',
+      email: '📧 Email blast sent to your list!',
+      restock: '📦 Restock order placed. Ships in 3 days.'
+    };
+    addNote(msgs[type]);
+    renderStats();
+    save();
+  }
+
+  function endDay() {
+    state.day++;
+    state.ap = 10;
+    state.visitors += 12 + Math.floor(Math.random() * 18);
+    state.trend += Math.floor(Math.random() * 7) - 2;
+    if (Math.random() > 0.5) {
+      state.orders++;
+      state.revenue += 67;
+      addNote('💜 Order received! A zodiac hoodie just sold.');
+    }
+    addNote(`🌌 Day ${state.day} begins. The stars are aligned.`);
+    renderStats();
+    save();
+  }
+
+  const autoFeed = [
+    '👁️ Someone is browsing your store.',
+    '📈 Your trend score is climbing.',
+    '🌙 A new visitor found you via TikTok.',
+    '✨ The cosmos are working in your favor.',
+    '🔔 Someone added a hoodie to their cart.',
+    '💫 Your brand energy is strong today.'
+  ];
+  setInterval(() => addNote(autoFeed[Math.floor(Math.random() * autoFeed.length)]), 8000);
+
+  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+  document.getElementById('endDayBtn').addEventListener('click', endDay);
+
+  if (state.notes.length) {
+    state.notes.slice().reverse().forEach(n => {
+      const feed = document.getElementById('feed');
+      const el = document.createElement('div');
+      el.className = 'log-item';
+      el.textContent = n;
+      feed.prepend(el);
+    });
+  } else {
+    addNote('🌙 Welcome to Remnants of Light. Your journey begins.');
+  }
+
+  renderStore();
+  renderStats();
+</script>
+</body>
+</html>
