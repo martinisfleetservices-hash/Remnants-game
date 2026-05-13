@@ -202,3 +202,41 @@ function renderProducts(){$("productsGrid").innerHTML="";G.products.forEach(func
 function getZodiacIcon(title){var t=title.toLowerCase();if(t.includes("aries"))return"♈";if(t.includes("taurus"))return"♉";if(t.includes("gemini"))return"♊";if(t.includes("cancer"))return"♋";if(t.includes("leo"))return"♌";if(t.includes("virgo"))return"♍";if(t.includes("libra"))return"♎";if(t.includes("scorpio"))return"♏";if(t.includes("sagittarius"))return"♐";if(t.includes("capricorn"))return"♑";if(t.includes("aquarius"))return"♒";if(t.includes("pisces"))return"♓";return"✨"}
 async function fetchOrders(){if(!G.shopifyToken){log("No Shopify token configured","purple");return}var now=Date.now();if(now-G.lastOrdersFetch<10000){log("Orders fetched recently, skipping","teal");return}G.lastOrdersFetch=now;log("Fetching orders from Shopify...","teal");var data=await shopifyGraphQL('{ orders(first:30, sortKey:CREATED_AT, reverse:true) { edges { node { name processedAt financialStatus fulfillmentStatus totalPrice { amount currencyCode } lineItems(first:5) { edges { node { title quantity } } } } } }',{});if(!data)return;G.orders=data.orders.edges.map(function(e){return{id:e.node.name,date:e.node.processedAt,financial:e.node.financialStatus,fulfillment:e.node.fulfillmentStatus,total:parseFloat(e.node.totalPrice.amount),lines:e.node.lineItems.edges.map(function(l){return{title:l.node.title,qty:l.node.quantity}})}});renderOrders();var revenue=G.orders.reduce(function(s,o){return s+o.total},0);G.revenue=revenue;G.ordersCount=G.orders.length;$("statRevenue").textContent="$"+revenue.toFixed(0);$("statOrders").textContent=G.ordersCount;log("Loaded "+G.orders.length+" orders ($"+revenue.toFixed(0)+")","gold")}
 function renderOrders(){$("ordersList").innerHTML="";if(G.orders.length===0){$("ordersList").innerHTML='<div class="no-orders"><div class="icon">📦</div><p>No orders found</p></div>';return}G.orders.forEach(function(o){var statusClass=o.fulfillment==="FULFILLED"?"fulfilled":o.fulfillment==="UNFULFILLED"?"unfulfilled":"pending";var linesHtml=o.lines.map(function(l){return'<div class="order-line">'+l.qty+'x "'+l.title+'"</div>'}).join("");var div=document.createElement("div");div.className="order-card";div.innerHTML='<div class="order-top"><span class="order-id">'+o.id+'</span><span class="order-status '+statusClass+'">'+o.fulfillment+"</span></div>"+linesHtml+'<div class="order-total">$'+o.total.toFixed(2)+"</div>";$("ordersList").appendChild(div)})}
+
+// === INIT ===
+function init() {
+    var token = localStorage.getItem('rol_shopify_token');
+    G.shopifyToken = token;
+    $('loadingOverlay').classList.add('hidden');
+    $('app').style.display = 'flex';
+    $('app').style.flexDirection = 'column';
+    if (token) {
+        log('Store connected', 'good');
+        fetchProducts();
+        fetchOrders();
+    } else {
+        log('Enter Shopify token to connect', 'purple');
+    }
+    initCity();
+    log('Tycoon Command ready', 'good');
+    var autoMsgs = [
+        '🌌 The cosmos awaits your command...',
+        '✨ A new day dawns on your empire.',
+        '🌙 Stars align in your favor.',
+        '💫 Energy flows through the grid.',
+        '🔮 The universe is listening.'
+    ];
+    setInterval(function() {
+        if (G.ap < G.maxAp) {
+            G.ap++;
+            $('apCount').textContent = G.ap;
+        }
+    }, 30000);
+    setInterval(function() {
+        log(autoMsgs[Math.floor(Math.random() * autoMsgs.length)], 'teal');
+    }, 15000);
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
