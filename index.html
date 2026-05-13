@@ -208,15 +208,16 @@ function init() {
     var token = localStorage.getItem('rol_shopify_token');
     G.shopifyToken = token;
     $('loadingOverlay').classList.add('hidden');
+    if (!token) {
+        $('tokenScreen').style.display = 'flex';
+        log('Enter Shopify token to connect', 'purple');
+        return;
+    }
     $('app').style.display = 'flex';
     $('app').style.flexDirection = 'column';
-    if (token) {
-        log('Store connected', 'good');
-        fetchProducts();
-        fetchOrders();
-    } else {
-        log('Enter Shopify token to connect', 'purple');
-    }
+    log('Store connected', 'good');
+    fetchProducts();
+    fetchOrders();
     initCity();
     log('Tycoon Command ready', 'good');
     var autoMsgs = [
