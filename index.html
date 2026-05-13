@@ -115,7 +115,79 @@ body{font-family:Inter,sans-serif;color:#eff0ff;background:#0a0a1a;overflow-x:hi
 <h1>REMNANTS OF LIGHT</h1>
 <p>Enter your Shopify Admin API access token to connect your store to the Tycoon Command Center.</p>
 <input id="tokIn" placeholder="shpat_..." style="width:340px;"/>
-<button onclick="localStorage.setItem('rol_shopify_token',document.getElementById('tokIn').value);location.reload()">Connect Store</button>
+<button id="connect-btn">Connect Store</button>
+<script>
+async function handleConnect() {
+    var tokenInput = document.getElementById('tokIn');
+    var btn = document.getElementById('connect-btn');
+    var token = tokenInput.value.trim();
+    
+    if (!token) {
+        log('⚠️ Please paste your Shopify token first', 'orange');
+        return;
+    }
+    
+    // Show connecting state for observability
+    btn.textContent = 'Connecting...';
+    btn.style.opacity = '0.6';
+    btn.disabled = true;
+    
+    // Store token
+    localStorage.setItem('rol_shopify_token', token);
+    G.shopifyToken = token;
+    
+    // Log each step for debugging
+    console.log('[Shopify Connect] Step 1: Token stored, hiding token screen');
+    log('🔌 Connecting to Shopify...', 'teal');
+    
+    try {
+        // Step 2: Fetch products
+        console.log('[Shopify Connect] Step 2: Calling fetchProducts()');
+        log('📡 Fetching products...', 'teal');
+        await fetchProducts();
+        console.log('[Shopify Connect] ✓ Products fetched:', G.products.length, 'items');
+        
+        // Step 3: Fetch orders
+        console.log('[Shopify Connect] Step 3: Calling fetchOrders()');
+        log('📦 Fetching orders...', 'teal');
+        await fetchOrders();
+        console.log('[Shopify Connect] ✓ Orders fetched:', G.orders.length, 'orders');
+        
+        // Step 4: Initialize world
+        console.log('[Shopify Connect] Step 4: Initializing game world');
+        initCity();
+        updateStat('products', G.products.length);
+        updateStat('orders', G.orders.length);
+        updateStat('revenue', '$' + (G.revenue||0).toFixed(0));
+        
+        // Step 5: Show app
+        document.getElementById('loadingOverlay').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        
+        console.log('[Shopify Connect] ✓ Connection complete! Game ready.');
+        log('✅ Store connected successfully!', 'good');
+        
+        // Start auto messages
+        var autoMsgs = [
+            '🌌 The cosmos awaits your command...',
+            '✨ A new day dawns on your empire.',
+            '🌙 Stars align in your favor.',
+            '💫 Energy flows through the grid.',
+            '🔮 The universe is listening.'
+        ];
+        setInterval(function() {
+            log(autoMsgs[Math.floor(Math.random() * autoMsgs.length)], 'teal');
+        }, 15000);
+        
+    } catch(e) {
+        console.error('[Shopify Connect] ❌ Error:', e.message);
+        log('❌ Connection failed: ' + e.message, 'orange');
+        btn.textContent = 'Connect Store';
+        btn.style.opacity = '1';
+        btn.disabled = false;
+    }
+}
+</script>
 </div>
 <div class="app" id="app" style="display:none;">
 <header class="header">
