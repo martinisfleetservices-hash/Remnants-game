@@ -258,7 +258,7 @@ async function handleConnect() {
 </div>
 </div>
 <script>
-var G={shopifyToken:null,storeDomain:"remnantoflight.myshopify.com",products:[],orders:[],visitors:0,revenue:0,ordersCount:0,customers:0,day:1,ap:10,maxAp:10,buildings:[],selectedBld:null,visitorTrend:[],revenueData:[0,0,0,0,0,0,0],ordersData:[0,0,0,0,0,0,0],visitorsData:[0,0,0,0,0,0,0],lastOrdersFetch:0};
+var G={shopifyToken:null,storeDomain:"wghnzp-ac.myshopify.com",products:[],orders:[],visitors:0,revenue:0,ordersCount:0,customers:0,day:1,ap:10,maxAp:10,buildings:[],selectedBld:null,visitorTrend:[],revenueData:[0,0,0,0,0,0,0],ordersData:[0,0,0,0,0,0,0],visitorsData:[0,0,0,0,0,0,0],lastOrdersFetch:0};
 function log(m,t){var n=document.createElement("div");n.className="log-item";var ts=new Date().toLocaleTimeString();n.innerHTML='<div class="log-time">'+ts+'</div><div class="log-msg '+t+'">'+m+"</div>";var f=document.getElementById("feed");if(f)f.insertBefore(n,f.firstChild);if(f&&f.children.length>50)f.removeChild(f.lastChild)}
 function $(id){return document.getElementById(id)}
 function switchTab(btn){document.querySelectorAll(".tabbar [data-tab]").forEach(function(b){b.classList.remove("active")});btn.classList.add("active");var tab=btn.dataset.tab;document.querySelectorAll(".tab-content").forEach(function(c){c.classList.remove("active")});if($(tab)){$(tab).classList.add("active");if(tab==="store"){$("subtab-products").style.display="block";$("subtab-orders").style.display="none";}}log("Tab: "+tab,"teal")}
