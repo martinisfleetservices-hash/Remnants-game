@@ -115,7 +115,7 @@ body{font-family:Inter,sans-serif;color:#eff0ff;background:#0a0a1a;overflow-x:hi
 <h1>REMNANTS OF LIGHT</h1>
 <p>Enter your Shopify Admin API access token to connect your store to the Tycoon Command Center.</p>
 <input id="tokIn" placeholder="shpat_..." style="width:340px;"/>
-<button id="connect-btn">Connect Store</button>
+<button id="connect-btn" onclick="handleConnect()">Connect Store</button>
 <script>
 async function handleConnect() {
     var tokenInput = document.getElementById('tokIn');
