@@ -1,289 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Remnants of Light</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0a0a1a;
-      --panel: rgba(13, 13, 36, 0.88);
-      --panel-2: rgba(20, 20, 48, 0.92);
-      --line: rgba(125, 92, 255, 0.28);
-      --text: #eff0ff;
-      --muted: #a7abcf;
-      --purple: #a56bff;
-      --teal: #39d6d0;
-      --gold: #f3c96b;
-      --danger: #ff6b8b;
-      --success: #53f0a9;
-      --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
-      --radius: 22px;
-    }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 15% 15%, rgba(165, 107, 255, 0.18), transparent 25%),
-        radial-gradient(circle at 80% 20%, rgba(57, 214, 208, 0.12), transparent 22%),
-        radial-gradient(circle at 70% 80%, rgba(243, 201, 107, 0.08), transparent 24%),
-        linear-gradient(180deg, #090918 0%, #0a0a1a 50%, #070713 100%);
-      overflow-x: hidden;
-    }
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
-        radial-gradient(rgba(255,255,255,0.35) 1px, transparent 1px);
-      background-position: 0 0, 18px 18px;
-      background-size: 36px 36px;
-      opacity: 0.08;
-      mix-blend-mode: screen;
-    }
-    .app { position: relative; z-index: 1; min-height: 100vh; padding: 24px; }
-    .shell { display: grid; grid-template-rows: auto auto 1fr; gap: 18px; max-width: 1600px; margin: 0 auto; }
-    .header {
-      display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
-      padding: 22px 24px;
-      background: linear-gradient(180deg, rgba(18,18,44,.95), rgba(12,12,28,.9));
-      border: 1px solid var(--line); border-radius: 28px; box-shadow: var(--shadow); backdrop-filter: blur(14px);
-    }
-    .brand h1 { margin: 0; font-family: 'Cinzel', serif; letter-spacing: 0.26em; font-size: clamp(20px,3vw,38px); background: linear-gradient(135deg, #fff 30%, var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .brand p { margin: 4px 0 0; font-size: 13px; color: var(--muted); letter-spacing: 0.12em; }
-    .hright { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
-    .ap-badge { padding: 8px 16px; background: rgba(165,107,255,0.15); border: 1px solid rgba(165,107,255,0.35); border-radius: 50px; font-size: 13px; font-weight: 600; color: var(--purple); }
-    .day-badge { padding: 8px 16px; background: rgba(243,201,107,0.12); border: 1px solid rgba(243,201,107,0.3); border-radius: 50px; font-size: 13px; font-weight: 600; color: var(--gold); }
-    .btn-end { padding: 10px 22px; background: linear-gradient(135deg, var(--purple), #7c3aed); border: none; border-radius: 50px; color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; transition: all .2s; box-shadow: 0 4px 18px rgba(165,107,255,0.35); }
-    .btn-end:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(165,107,255,0.5); }
-    .statsbar { display: flex; gap: 12px; flex-wrap: wrap; }
-    .stat { flex: 1; min-width: 100px; padding: 14px 18px; background: rgba(13,13,36,0.88); border: 1px solid var(--line); border-radius: 16px; backdrop-filter: blur(12px); }
-    .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
-    .stat-value { font-size: 22px; font-weight: 800; }
-    .body { display: grid; grid-template-columns: 1fr 280px; gap: 18px; }
-    .main { display: flex; flex-direction: column; gap: 14px; }
-    .tabbar { display: flex; gap: 8px; padding: 6px; background: rgba(13,13,36,0.88); border: 1px solid var(--line); border-radius: 18px; backdrop-filter: blur(12px); flex-wrap: wrap; }
-    .tab { flex: 1; min-width: 80px; padding: 10px 14px; background: transparent; border: none; border-radius: 12px; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; white-space: nowrap; }
-    .tab:hover { color: var(--text); background: rgba(255,255,255,0.06); }
-    .tab.active { background: linear-gradient(135deg, rgba(165,107,255,0.25), rgba(57,214,208,0.15)); color: #fff; box-shadow: 0 2px 12px rgba(165,107,255,0.2); }
-    .panels { flex: 1; }
-    .panel { display: none; }
-    .panel.active { display: block; }
-    .panel-placeholder { padding: 60px 40px; text-align: center; background: rgba(13,13,36,0.88); border: 1px solid var(--line); border-radius: 22px; color: var(--muted); font-size: 15px; }
-    .panel-placeholder .icon { font-size: 48px; margin-bottom: 16px; }
-    .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
-    .product { background: rgba(13,13,36,0.88); border: 1px solid var(--line); border-radius: 18px; padding: 18px; backdrop-filter: blur(12px); transition: all .25s; cursor: pointer; }
-    .product:hover { transform: translateY(-4px); border-color: rgba(165,107,255,0.5); box-shadow: 0 12px 32px rgba(165,107,255,0.2); }
-    .product-icon { font-size: 36px; margin-bottom: 10px; }
-    .product-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-    .product-price { font-size: 18px; font-weight: 800; color: var(--gold); margin-bottom: 10px; }
-    .badge { display: inline-block; padding: 3px 10px; border-radius: 50px; font-size: 11px; font-weight: 700; margin-bottom: 10px; }
-    .badge-live { background: rgba(83,240,169,0.15); color: var(--success); border: 1px solid rgba(83,240,169,0.3); }
-    .badge-out { background: rgba(255,107,139,0.15); color: var(--danger); border: 1px solid rgba(255,107,139,0.3); }
-    .badge-soon { background: rgba(165,107,255,0.15); color: var(--purple); border: 1px solid rgba(165,107,255,0.3); }
-    .btn-action { width: 100%; padding: 8px; background: rgba(165,107,255,0.12); border: 1px solid rgba(165,107,255,0.3); border-radius: 10px; color: var(--purple); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; }
-    .btn-action:hover { background: rgba(165,107,255,0.25); }
-    .sidebar { display: flex; flex-direction: column; gap: 14px; }
-    .sidecard { background: rgba(13,13,36,0.88); border: 1px solid var(--line); border-radius: 22px; padding: 18px; backdrop-filter: blur(12px); }
-    .sidecard h3 { margin: 0 0 14px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
-    .feed { display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto; }
-    .log-item { padding: 10px 12px; background: rgba(20,20,48,0.92); border: 1px solid var(--line); border-radius: 12px; font-size: 12px; line-height: 1.5; animation: fadeIn .4s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-    .quick-actions { display: flex; flex-direction: column; gap: 8px; }
-    .qa-btn { padding: 10px 14px; background: rgba(20,20,48,0.92); border: 1px solid var(--line); border-radius: 12px; color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; text-align: left; }
-    .qa-btn:hover { border-color: rgba(165,107,255,0.5); background: rgba(165,107,255,0.1); }
-    @media (max-width: 900px) { .body { grid-template-columns: 1fr; } .sidebar { display: none; } }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Remnants of Light - Tycoon Command</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{font-family:Inter,sans-serif;color:#eff0ff;background:#0a0a1a;overflow-x:hidden;}
+.app{min-height:100vh;display:flex;flex-direction:column;}
+.header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 24px;background:linear-gradient(180deg,rgba(18,18,44,.98),rgba(12,12,28,.95));border-bottom:1px solid rgba(125,92,255,.28);flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand-icon{font-size:28px;}
+.brand h1{font-family:Cinzel,serif;letter-spacing:.2em;font-size:clamp(14px,2.5vw,24px);background:linear-gradient(135deg,#fff 30%,#a56bff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.brand p{font-size:10px;color:#a7abcf;letter-spacing:.06em;}
+.hright{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.ap-badge,.day-badge,.city-lvl{padding:6px 12px;border-radius:50px;font-size:12px;font-weight:600;}
+.ap-badge{background:rgba(165,107,255,.15);border:1px solid rgba(165,107,255,.35);color:#a56bff;}
+.day-badge{background:rgba(243,201,107,.12);border:1px solid rgba(243,201,107,.3);color:#f3c96b;}
+.city-lvl{background:rgba(57,214,208,.12);border:1px solid rgba(57,214,208,.3);color:#39d6d0;}
+.btn-end{padding:8px 18px;background:linear-gradient(135deg,#a56bff,#7c3aed);border:none;border-radius:50px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;transition:all .2s;}
+.btn-end:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(165,107,255,.4);}
+.statsbar{display:flex;gap:8px;padding:10px 24px;background:rgba(10,10,26,.8);border-bottom:1px solid rgba(125,92,255,.28);flex-wrap:wrap;}
+.stat{flex:1;min-width:90px;padding:8px 12px;background:rgba(13,13,36,.92);border:1px solid rgba(125,92,255,.28);border-radius:12px;}
+.stat-label{font-size:9px;color:#a7abcf;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
+.stat-value{font-size:18px;font-weight:800;}
+.stat-value.gold{color:#f3c96b;}.stat-value.purple{color:#a56bff;}.stat-value.teal{color:#39d6d0;}.stat-value.green{color:#53f0a9;}
+.main-body{display:flex;flex:1;overflow:hidden;}
+.tabbar{width:200px;min-width:200px;background:rgba(13,13,36,.92);border-right:1px solid rgba(125,92,255,.28);padding:12px 8px;display:flex;flex-direction:column;gap:4px;}
+.tab-btn{display:flex;align-items:center;gap:8px;padding:10px 12px;background:transparent;border:none;border-radius:12px;color:#a7abcf;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;text-align:left;}
+.tab-btn:hover{color:#eff0ff;background:rgba(255,255,255,.06);}
+.tab-btn.active{background:linear-gradient(135deg,rgba(165,107,255,.25),rgba(57,214,208,.12));color:#fff;}
+.tab-icon{font-size:16px;}
+.tab-sub{font-size:10px;color:#7a7d9c;margin-top:1px;}
+.content{flex:1;overflow-y:auto;padding:16px;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.city-view{position:relative;}
+#cityCanvas{width:100%;border-radius:16px;border:1px solid rgba(125,92,255,.28);background:radial-gradient(ellipse at center,#0d0d24 0%,#080818 60%,#050512 100%);display:block;}
+.city-tooltip{position:absolute;padding:10px 14px;background:rgba(20,20,48,.97);border:1px solid rgba(125,92,255,.28);border-radius:12px;font-size:12px;pointer-events:none;z-index:10;box-shadow:0 12px 40px rgba(0,0,0,.5);max-width:200px;display:none;}
+.city-tooltip h4{font-size:13px;margin-bottom:3px;}
+.city-tooltip p{color:#a7abcf;line-height:1.4;font-size:11px;}
+.city-legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+.legend-item{display:flex;align-items:center;gap:5px;padding:5px 10px;background:rgba(13,13,36,.92);border:1px solid rgba(125,92,255,.28);border-radius:8px;font-size:11px;}
+.legend-active{color:#53f0a9;}
+.legend-locked{opacity:.4;}
+.bld-detail{margin-top:12px;padding:14px;background:rgba(13,13,36,.92);border:1px solid rgba(125,92,255,.28);border-radius:16px;display:none;}
+.bld-detail.visible{display:block;}
+.bld-detail h3{font-size:14px;margin-bottom:6px;}
+.bld-stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.bld-stat{padding:6px 10px;background:rgba(20,20,48,.8);border-radius:8px;font-size:11px;}
+.bld-stat span{color:#f3c96b;font-weight:700;}
+.store-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.store-header h2{font-size:16px;}
+.refresh-btn{padding:7px 14px;background:rgba(57,214,208,.12);border:1px solid rgba(57,214,208,.3);border-radius:10px;color:#39d6d0;font-size:11px;font-weight:600;cursor:pointer;}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;}
+.product-card{background:rgba(13,13,36,.92);border:1px solid rgba(125,92,255,.28);border-radius:16px;padding:16px;transition:all .25s;cursor:pointer;}
+.product-card:hover{transform:translateY(-3px);border-color:rgba(165,107,255,.5);box-shadow:0 10px 28px rgba(165,107,255,.15);}
+.product-card .zodiac-icon{font-size:36px;margin-bottom:6px;}
+.product-card .p-name{font-size:12px;font-weight:700;margin-bottom:3px;}
+.product-card .p-price{font-size:18px;font-weight:800;color:#f3c96b;margin-bottom:6px;}
+.badge{display:inline-block;padding:2px 8px;border-radius:50px;font-size:10px;font-weight:700;}
+.badge-live{background:rgba(83,240,169,.15);color:#53f0a9;border:1px solid rgba(83,240,169,.3);}
+.badge-draft{background:rgba(165,107,255,.15);color:#a56bff;border:1px solid rgba(165,107,255,.3);}
+.badge-unlisted{background:rgba(255,107,139,.15);color:#ff6b8b;border:1px solid rgba(255,107,139,.3);}
+.product-card .p-type{font-size:10px;color:#a7abcf;margin-top:4px;}
+.orders-list{display:flex;flex-direction:column;gap:8px;}
+.order-card{background:rgba(13,13,36,.92);border:1px solid rgba(125,92,255,.28);border-radius:14px;padding:12px 14px;}
+.order-card .order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:4px;}
+.order-id{font-size:12px;font-weight:700;color:#a56bff;}
+.order-status{font-size:10px;padding:2px 8px;border-radius:50px;}
+.order-status.fulfilled{background:rgba(57,214,208,.15);color:#39d6d0;border:1px solid rgba(57,214,208,.3);}
+.order-status.pending{background:rgba(243,201,107,.15);color:#f3c96b;border:1px solid rgba(243,201,107,.3);}
+.order-status.unfulfilled{background:rgba(255,107,139,.15);color:#ff6b8b;border:1px solid rgba(255,107,139,.3);}
+.order-line{font-size:11px;color:#a7abcf;margin-bottom:3px;}
+.order-total{font-size:14px;font-weight:800;color:#f3c96b;margin-top:4px;}
+.no-orders{padding:50px 30px;text-align:center;color:#a7abcf;}
+.no-orders .icon{font-size:42px;margin-bottom:10px;}
+.analytics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;}
+.chart-card{background:rgba(13,13,36,.92);border:1px solid rgba(125,92,255,.28);border-radius:16px;padding:16px;}
+.chart-card h3{font-size:12px;color:#a7abcf;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;}
+.chart-canvas{width:100%;height:140px;}
+.design-intro{padding:40px;text-align:center;color:#a7abcf;}
+.design-intro .icon{font-size:46px;margin-bottom:10px;}
+.design-intro h2{font-size:18px;color:#eff0ff;margin-bottom:6px;}
+.design-intro p{font-size:13px;line-height:1.6;max-width:380px;margin:0 auto;}
+.design-soon{margin-top:16px;padding:14px;background:rgba(165,107,255,.1);border:1px solid rgba(165,107,255,.2);border-radius:12px;font-size:12px;color:#a56bff;}
+.sidefeed{width:240px;min-width:240px;background:rgba(13,13,36,.92);border-left:1px solid rgba(125,92,255,.28);display:flex;flex-direction:column;}
+.sidefeed h3{padding:12px 14px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#a7abcf;border-bottom:1px solid rgba(125,92,255,.28);}
+.feed{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:5px;}
+.log-item{padding:8px 10px;background:rgba(20,20,48,.95);border:1px solid rgba(125,92,255,.28);border-radius:10px;font-size:11px;line-height:1.4;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-3px);}to{opacity:1;transform:translateY(0);}}
+.log-time{font-size:9px;color:#7a7d9c;margin-bottom:1px;}
+.log-msg{color:#eff0ff;}
+.log-msg.good{color:#53f0a9;}.log-msg.gold{color:#f3c96b;}.log-msg.purple{color:#a56bff;}.log-msg.teal{color:#39d6d0;}
+.token-screen{position:fixed;inset:0;background:#0a0a1a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:40px;text-align:center;z-index:999;}
+.token-screen h1{font-family:Cinzel,serif;letter-spacing:.15em;font-size:clamp(20px,4vw,32px);background:linear-gradient(135deg,#fff,#a56bff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.token-screen p{color:#a7abcf;font-size:14px;max-width:420px;line-height:1.6;}
+.token-screen input{padding:12px 16px;background:rgba(13,13,36,.92);border:1px solid rgba(125,92,255,.35);border-radius:12px;color:#eff0ff;font-size:14px;width:380px;}
+.token-screen button{padding:12px 28px;background:linear-gradient(135deg,#a56bff,#7c3aed);border:none;border-radius:12px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;}
+.loading-overlay{position:fixed;inset:0;background:rgba(10,10,26,.95);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.loading-overlay.hidden{display:none;}
+.loading-spinner{width:40px;height:40px;border:3px solid rgba(125,92,255,.28);border-top-color:#a56bff;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-size:13px;color:#a7abcf;font-weight:600;}
+@media(max-width:900px){.main-body{flex-direction:column;}.tabbar,.sidefeed{display:none;}}
+</style>
 </head>
 <body>
-<div class="app">
-  <div class="shell">
-    <header class="header">
-      <div class="brand">
-        <h1>REMNANTS OF LIGHT</h1>
-        <p>Hidden in nature. Written in the stars.</p>
-      </div>
-      <div class="hright">
-        <div class="ap-badge">⚡ <span id="apCount">10</span> AP</div>
-        <div class="day-badge">🌙 Day <span id="dayCount">1</span></div>
-        <button class="btn-end" id="endDayBtn">End Day →</button>
-      </div>
-    </header>
-    <div class="statsbar">
-      <div class="stat"><div class="stat-label">💰 Revenue</div><div class="stat-value" id="statRevenue">$0</div></div>
-      <div class="stat"><div class="stat-label">📦 Orders</div><div class="stat-value" id="statOrders">0</div></div>
-      <div class="stat"><div class="stat-label">🛍️ Products</div><div class="stat-value" id="statProducts">0</div></div>
-      <div class="stat"><div class="stat-label">👁️ Visitors</div><div class="stat-value" id="statVisitors">0</div></div>
-      <div class="stat"><div class="stat-label">📈 Trend</div><div class="stat-value" id="statTrend">0</div></div>
-    </div>
-    <div class="body">
-      <div class="main">
-        <div class="tabbar">
-          <button class="tab active" data-tab="store">🏪 Store</button>
-          <button class="tab" data-tab="inventory">📦 Inventory</button>
-          <button class="tab" data-tab="marketing">📣 Marketing</button>
-          <button class="tab" data-tab="analytics">📊 Analytics</button>
-          <button class="tab" data-tab="design">🎨 Design</button>
-          <button class="tab" data-tab="settings">⚙️ Settings</button>
-        </div>
-        <div class="panels">
-          <div class="panel active" id="storePanel"><div class="store-grid" id="storeGrid"></div></div>
-          <div class="panel" id="inventoryPanel"><div class="panel-placeholder"><div class="icon">📦</div>Inventory management coming in Stage 2.</div></div>
-          <div class="panel" id="marketingPanel"><div class="panel-placeholder"><div class="icon">📣</div>Ad campaigns and promotions coming in Stage 2.</div></div>
-          <div class="panel" id="analyticsPanel"><div class="panel-placeholder"><div class="icon">📊</div>Revenue charts and analytics coming in Stage 2.</div></div>
-          <div class="panel" id="designPanel"><div class="panel-placeholder"><div class="icon">🎨</div>Product design studio coming in Stage 2.</div></div>
-          <div class="panel" id="settingsPanel"><div class="panel-placeholder"><div class="icon">⚙️</div>Settings and integrations coming in Stage 2.</div></div>
-        </div>
-      </div>
-      <div class="sidebar">
-        <div class="sidecard">
-          <h3>🔔 Live Feed</h3>
-          <div class="feed" id="feed"></div>
-        </div>
-        <div class="sidecard">
-          <h3>⚡ Quick Actions</h3>
-          <div class="quick-actions">
-            <button class="qa-btn" onclick="doAction('post')">📸 Post on Instagram</button>
-            <button class="qa-btn" onclick="doAction('tiktok')">🎵 Post on TikTok</button>
-            <button class="qa-btn" onclick="doAction('email')">📧 Send Email Blast</button>
-            <button class="qa-btn" onclick="doAction('restock')">📦 Restock Product</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+PART2_MARKER<div class="loading-overlay" id="loadingOverlay"><div class="loading-spinner"></div><div class="loading-text">Initializing Tycoon Command...</div></div>
+<div class="token-screen" id="tokenScreen" style="display:none;">
+<h1>REMNANTS OF LIGHT</h1>
+<p>Enter your Shopify Admin API access token to connect your store to the Tycoon Command Center.</p>
+<input id="tokIn" placeholder="shpat_..." style="width:340px;"/>
+<button onclick="localStorage.setItem('rol_shopify_token',document.getElementById('tokIn').value);location.reload()">Connect Store</button>
+</div>
+<div class="app" id="app" style="display:none;">
+<header class="header">
+<div class="brand"><div class="brand-icon">✨</div><div><h1>REMNANTS OF LIGHT</h1><p>Tycoon Command Center</p></div></div>
+<div class="hright">
+<div class="city-lvl" id="cityLvl">🌆 Lvl 1</div>
+<div class="ap-badge">⚡ <span id="apCount">10</span> AP</div>
+<div class="day-badge">🌙 Day <span id="dayCount">1</span></div>
+<button class="btn-end" id="endDayBtn">End Day</button>
+</div>
+</header>
+<div class="statsbar">
+<div class="stat"><div class="stat-label">💰 Revenue</div><div class="stat-value gold" id="statRevenue">$0</div></div>
+<div class="stat"><div class="stat-label">📦 Orders</div><div class="stat-value purple" id="statOrders">0</div></div>
+<div class="stat"><div class="stat-label">🛍️ Products</div><div class="stat-value teal" id="statProducts">0</div></div>
+<div class="stat"><div class="stat-label">👁️ Visitors</div><div class="stat-value" id="statVisitors">0</div></div>
+<div class="stat"><div class="stat-label">👥 Customers</div><div class="stat-value green" id="statCustomers">0</div></div>
+</div>
+<div class="main-body">
+<div class="tabbar">
+<button class="tab-btn active" data-tab="city"><span class="tab-icon">🏙️</span><div><div>City Builder</div><div class="tab-sub">Your empire</div></div></button>
+<button class="tab-btn" data-tab="store"><span class="tab-icon">🛍️</span><div><div>Shopify Store</div><div class="tab-sub">Products & Orders</div></div></button>
+<button class="tab-btn" data-tab="analytics"><span class="tab-icon">📊</span><div><div>Analytics</div><div class="tab-sub">Insights</div></div></button>
+<button class="tab-btn" data-tab="design"><span class="tab-icon">✏️</span><div><div>Design Lab</div><div class="tab-sub">Create</div></div></button>
+</div>
+<div class="content">
+<div id="tab-city" class="tab-content active">
+<div class="city-view">
+<canvas id="cityCanvas" width="900" height="500"></canvas>
+<div class="city-tooltip" id="cityTooltip"><h4></h4><p></p></div>
+</div>
+<div class="city-legend">
+<div class="legend-item legend-active">🏪 Warehouse — Active</div>
+<div class="legend-item legend-active">🏬 Factory — Active</div>
+<div class="legend-item legend-active">🏢 HQ — Active</div>
+<div class="legend-item legend-locked">🌟 Nexus — Locked</div>
+<div class="legend-item legend-locked">🏰 Capital — Locked</div>
+</div>
+<div class="bld-detail" id="bldDetail"><h3></h3><div class="bld-stats"></div></div>
+</div>
+<div id="tab-store" class="tab-content">
+<div class="store-header"><h2>🛍️ Shopify Store</h2><button class="refresh-btn" onclick="fetchProducts()">↻ Refresh</button></div>
+<div id="store-subtabs" style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;">
+<button class="tab-btn active" data-subtab="products" onclick="switchStoreSubtab(this)" style="border-radius:10px;padding:6px 12px;font-size:11px;">Products</button>
+<button class="tab-btn" data-subtab="orders" onclick="switchStoreSubtab(this)" style="border-radius:10px;padding:6px 12px;font-size:11px;">Orders</button>
+</div>
+<div id="subtab-products">
+<div class="products-grid" id="productsGrid"></div>
+</div>
+<div id="subtab-orders" style="display:none;">
+<div class="orders-list" id="ordersList"></div>
+</div>
+</div>
+<div id="tab-analytics" class="tab-content">
+<div class="analytics-grid">
+<div class="chart-card"><h3>💰 Revenue (7 days)</h3><canvas class="chart-canvas" id="revenueChart"></canvas></div>
+<div class="chart-card"><h3>📦 Orders (7 days)</h3><canvas class="chart-canvas" id="ordersChart"></canvas></div>
+<div class="chart-card"><h3>👁️ Visitors (7 days)</h3><canvas class="chart-canvas" id="visitorsChart"></canvas></div>
+</div>
+</div>
+<div id="tab-design" class="tab-content">
+<div class="design-intro"><div class="icon">✏️</div><h2>Design Lab</h2><p>Create zodiac-inspired apparel designs and publish them directly to your Shopify store.</p></div>
+<div class="design-soon">🚀 Coming soon — AI-powered zodiac design generation</div>
+</div>
+</div>
+</div>
+<div class="sidefeed"><h3>📋 Activity Log</h3><div class="feed" id="feed"></div></div>
+</div>
 </div>
 <script>
-  const zodiac = [
-    ['♈','Aries Hoodie',67,'Out of Stock'],
-    ['♉','Taurus Hoodie',67,'Coming Soon'],
-    ['♊','Gemini Hoodie',67,'Coming Soon'],
-    ['♋','Cancer Hoodie',67,'Coming Soon'],
-    ['♌','Leo Hoodie',67,'Coming Soon'],
-    ['♍','Virgo Hoodie',67,'Coming Soon'],
-    ['♎','Libra Hoodie',67,'Coming Soon'],
-    ['♏','Scorpio Hoodie',67,'Coming Soon'],
-    ['♐','Sagittarius Hoodie',67,'Coming Soon'],
-    ['♑','Capricorn Hoodie',67,'Coming Soon'],
-    ['♒','Aquarius Hoodie',67,'Coming Soon'],
-    ['♓','Pisces Hoodie',67,'Coming Soon']
-  ];
-
-  let state = JSON.parse(localStorage.getItem('rol_state') || 'null') || {
-    day:1, ap:10, revenue:0, orders:0, visitors:0, trend:0, notes:[]
-  };
-
-  function save() { localStorage.setItem('rol_state', JSON.stringify(state)); }
-
-  function renderStats() {
-    document.getElementById('apCount').textContent = state.ap;
-    document.getElementById('dayCount').textContent = state.day;
-    document.getElementById('statRevenue').textContent = '$' + state.revenue.toLocaleString();
-    document.getElementById('statOrders').textContent = state.orders;
-    document.getElementById('statProducts').textContent = zodiac.filter(z => z[2] === 'Live').length;
-    document.getElementById('statVisitors').textContent = state.visitors;
-    document.getElementById('statTrend').textContent = state.trend;
-  }
-
-  function addNote(msg) {
-    const feed = document.getElementById('feed');
-    const el = document.createElement('div');
-    el.className = 'log-item';
-    el.textContent = msg;
-    feed.prepend(el);
-    state.notes.unshift(msg);
-    if (state.notes.length > 20) state.notes.pop();
-    save();
-  }
-
-  function renderStore() {
-    const grid = document.getElementById('storeGrid');
-    grid.innerHTML = '';
-    zodiac.forEach(([icon, name, price, status]) => {
-      const badgeClass = status === 'Live' ? 'badge-live' : status === 'Out of Stock' ? 'badge-out' : 'badge-soon';
-      const card = document.createElement('div');
-      card.className = 'product';
-      card.innerHTML = `
-        <div class="product-icon">${icon}</div>
-        <div class="product-name">${name}</div>
-        <div class="product-price">$${price}</div>
-        <div class="badge ${badgeClass}">${status}</div>
-        <button class="btn-action">Manage →</button>
-      `;
-      grid.appendChild(card);
-    });
-  }
-
-  function switchTab(tab) {
-    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.getElementById(tab + 'Panel').classList.add('active');
-  }
-
-  function doAction(type) {
-    if (state.ap <= 0) return addNote('⛔ No AP left — end the day to recharge.');
-    state.ap--;
-    const msgs = {
-      post: '📸 Instagram post published! Engagement incoming.',
-      tiktok: '🎵 TikTok posted! The algorithm is watching.',
-      email: '📧 Email blast sent to your list!',
-      restock: '📦 Restock order placed. Ships in 3 days.'
-    };
-    addNote(msgs[type]);
-    renderStats();
-    save();
-  }
-
-  function endDay() {
-    state.day++;
-    state.ap = 10;
-    state.visitors += 12 + Math.floor(Math.random() * 18);
-    state.trend += Math.floor(Math.random() * 7) - 2;
-    if (Math.random() > 0.5) {
-      state.orders++;
-      state.revenue += 67;
-      addNote('💜 Order received! A zodiac hoodie just sold.');
-    }
-    addNote(`🌌 Day ${state.day} begins. The stars are aligned.`);
-    renderStats();
-    save();
-  }
-
-  const autoFeed = [
-    '👁️ Someone is browsing your store.',
-    '📈 Your trend score is climbing.',
-    '🌙 A new visitor found you via TikTok.',
-    '✨ The cosmos are working in your favor.',
-    '🔔 Someone added a hoodie to their cart.',
-    '💫 Your brand energy is strong today.'
-  ];
-  setInterval(() => addNote(autoFeed[Math.floor(Math.random() * autoFeed.length)]), 8000);
-
-  document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
-  document.getElementById('endDayBtn').addEventListener('click', endDay);
-
-  if (state.notes.length) {
-    state.notes.slice().reverse().forEach(n => {
-      const feed = document.getElementById('feed');
-      const el = document.createElement('div');
-      el.className = 'log-item';
-      el.textContent = n;
-      feed.prepend(el);
-    });
-  } else {
-    addNote('🌙 Welcome to Remnants of Light. Your journey begins.');
-  }
-
-  renderStore();
-  renderStats();
-</script>
-</body>
-</html>
+var G={shopifyToken:null,storeDomain:"remnantoflight.myshopify.com",products:[],orders:[],visitors:0,revenue:0,ordersCount:0,customers:0,day:1,ap:10,maxAp:10,buildings:[],selectedBld:null,visitorTrend:[],revenueData:[0,0,0,0,0,0,0],ordersData:[0,0,0,0,0,0,0],visitorsData:[0,0,0,0,0,0,0],lastOrdersFetch:0};
+function log(m,t){var n=document.createElement("div");n.className="log-item";var ts=new Date().toLocaleTimeString();n.innerHTML='<div class="log-time">'+ts+'</div><div class="log-msg '+t+'">'+m+"</div>";var f=document.getElementById("feed");if(f)f.insertBefore(n,f.firstChild);if(f&&f.children.length>50)f.removeChild(f.lastChild)}
+function $(id){return document.getElementById(id)}
+function switchTab(btn){document.querySelectorAll("[data-tab]").forEach(function(b){b.classList.remove("active")});btn.classList.add("active");var tab=btn.dataset.tab;document.querySelectorAll(".tab-content").forEach(function(c){c.classList.remove("active")});$(tab).classList.add("active")}
+document.querySelectorAll("[data-tab]").forEach(function(btn){btn.addEventListener("click",function(){switchTab(this)})})
+function switchStoreSubtab(btn){document.querySelectorAll("#store-subtabs .tab-btn").forEach(function(b){b.classList.remove("active")});btn.classList.add("active");var st=btn.dataset.subtab;$("subtab-products").style.display=st==="products"?"block":"none";$("subtab-orders").style.display=st==="orders"?"block":"none"}
+function initCity(){var c=$("cityCanvas");var ctx=c.getContext("2d");var W=c.width,H=c.height;G.buildings=[{id:"warehouse",name:"Warehouse",x:120,y:180,w:100,h:70,active:true,color:"#3d9e6c",employees:0,income:0},{id:"factory",name:"Factory",x:380,y:140,w:130,h:90,active:true,color:"#4a7fcc",employees:0,income:0},{id:"hq",name:"HQ",x:650,y:200,w:150,h:110,active:true,color:"#8b5ecf",employees:0,income:0}];renderCity()}
+function renderCity(){var c=$("cityCanvas");var ctx=c.getContext("2d");var W=c.width,H=c.height;ctx.clearRect(0,0,W,H);var grad=ctx.createRadialGradient(W/2,H/2,30,W/2,H/2,W);grad.addColorStop(0,"#1a1a38");grad.addColorStop(1,"#0a0a1a");ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);for(var i=0;i<60;i++){var sx=Math.random()*W,sy=Math.random()*H,size=Math.random()*1.5+0.2,alpha=Math.random()*0.6+0.2;ctx.fillStyle="rgba(200,180,255,"+alpha+")";ctx.beginPath();ctx.arc(sx,sy,size,0,Math.PI*2);ctx.fill()}ctx.strokeStyle="rgba(125,92,255,0.08)";ctx.lineWidth=1;for(var gx=0;gx<W;gx+=40){ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke()}for(var gy=0;gy<H;gy+=40){ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke()}G.buildings.forEach(function(b){ctx.fillStyle=b.color;ctx.globalAlpha=0.85;ctx.beginPath();ctx.roundRect(b.x,b.y,b.w,b.h,10);ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=b.active?"rgba(255,255,255,0.4)":"rgba(255,100,100,0.3)";ctx.lineWidth=b.active?2:1;ctx.stroke();ctx.fillStyle="#fff";ctx.font="bold 11px Inter";ctx.textAlign="center";ctx.fillText(b.name,b.x+b.w/2,b.y+b.h/2+4);if(b.active){ctx.fillStyle="rgba(83,240,169,0.6)";ctx.font="9px Inter";ctx.fillText("● ONLINE",b.x+b.w/2,b.y+b.h-8)}});ctx.globalAlpha=1}
+$("cityCanvas").addEventListener("mousemove",function(e){var rect=$("cityCanvas").getBoundingClientRect();var scaleX=$("cityCanvas").width/rect.width;var scaleY=$("cityCanvas").height/rect.height;var mx=(e.clientX-rect.left)*scaleX;var my=(e.clientY-rect.top)*scaleY;var found=null;for(var i=0;i<G.buildings.length;i++){var b=G.buildings[i];if(mx>=b.x&&mx<=b.x+b.w&&my>=b.y&&my<=b.y+b.h){found=b;break}}var tt=$("cityTooltip");if(found){tt.style.display="block";tt.style.left=(e.clientX-rect.left+15)+"px";tt.style.top=(e.clientY-rect.top-10)+"px";tt.querySelector("h4").textContent=found.name;tt.querySelector("p").textContent="Status: "+(found.active?"Active":"Inactive");$("bldDetail").classList.add("visible");$("bldDetail").querySelector("h3").textContent=found.name;$("bldDetail").querySelector(".bld-stats").innerHTML='<div class="bld-stat">Employees: <span>'+found.employees+"</span></div>\n<div class=\"bld-stat\">Income: <span>$"+found.income+"</span></div>"}else{tt.style.display="none"}})
+$("cityCanvas").addEventListener("mouseleave",function(){$("cityTooltip").style.display="none"})
+async function shopifyGraphQL(query,variables){var res=await fetch("https://"+G.storeDomain+"/admin/api/2024-01/graphql.json",{method:"POST",headers:{"Content-Type":"application/json","X-Shopify-Access-Token":G.shopifyToken},body:JSON.stringify({query:query,variables:variables})});var json=await res.json();if(json.errors){log("Shopify error: "+json.errors[0].message,"purple");return null}return json.data}
+async function fetchProducts(){if(!G.shopifyToken){log("No Shopify token configured","purple");return}log("Fetching products from Shopify...","teal");$("productsGrid").innerHTML='<div style="padding:40px;text-align:center;color:#a7abcf;">Loading...</div>';var data=await shopifyGraphQL('{ products(first:20) { edges { node { id title status vendor productType variants(first:1) { edges { node { price { amount currencyCode } } } } } } }',{});if(!data)return;var prods=data.products.edges;G.products=prods.map(function(e){return{id:e.node.id,title:e.node.title,status:e.node.status,type:e.node.productType,variants:e.node.variants.edges.map(function(v){return{price:parseFloat(v.node.price.amount)}})}});renderProducts();$("statProducts").textContent=G.products.length;log("Loaded "+G.products.length+" products","good")}
+function renderProducts(){$("productsGrid").innerHTML="";G.products.forEach(function(p){var icon=getZodiacIcon(p.title);var badgeClass=p.status==="ACTIVE"?"badge-live":p.status==="DRAFT"?"badge-draft":"badge-unlisted";var price=p.variants[0]?"$"+p.variants[0].price.toFixed(2):"--";var card=document.createElement("div");card.className="product-card";card.innerHTML='<div class="zodiac-icon">'+icon+"</div>\n<div class=\"p-name\">"+p.title+"</div>\n<div class=\"p-price\">"+price+"</div>\n<span class=\"badge "+badgeClass+"\">"+p.status+"</span>\n<div class=\"p-type\">"+(p.type||"General")+"</div>";$("productsGrid").appendChild(card)})}
+function getZodiacIcon(title){var t=title.toLowerCase();if(t.includes("aries"))return"♈";if(t.includes("taurus"))return"♉";if(t.includes("gemini"))return"♊";if(t.includes("cancer"))return"♋";if(t.includes("leo"))return"♌";if(t.includes("virgo"))return"♍";if(t.includes("libra"))return"♎";if(t.includes("scorpio"))return"♏";if(t.includes("sagittarius"))return"♐";if(t.includes("capricorn"))return"♑";if(t.includes("aquarius"))return"♒";if(t.includes("pisces"))return"♓";return"✨"}
+async function fetchOrders(){if(!G.shopifyToken){log("No Shopify token configured","purple");return}var now=Date.now();if(now-G.lastOrdersFetch<10000){log("Orders fetched recently, skipping","teal");return}G.lastOrdersFetch=now;log("Fetching orders from Shopify...","teal");var data=await shopifyGraphQL('{ orders(first:30, sortKey:CREATED_AT, reverse:true) { edges { node { name processedAt financialStatus fulfillmentStatus totalPrice { amount currencyCode } lineItems(first:5) { edges { node { title quantity } } } } } }',{});if(!data)return;G.orders=data.orders.edges.map(function(e){return{id:e.node.name,date:e.node.processedAt,financial:e.node.financialStatus,fulfillment:e.node.fulfillmentStatus,total:parseFloat(e.node.totalPrice.amount),lines:e.node.lineItems.edges.map(function(l){return{title:l.node.title,qty:l.node.quantity}})}});renderOrders();var revenue=G.orders.reduce(function(s,o){return s+o.total},0);G.revenue=revenue;G.ordersCount=G.orders.length;$("statRevenue").textContent="$"+revenue.toFixed(0);$("statOrders").textContent=G.ordersCount;log("Loaded "+G.orders.length+" orders ($"+revenue.toFixed(0)+")","gold")}
+function renderOrders(){$("ordersList").innerHTML="";if(G.orders.length===0){$("ordersList").innerHTML='<div class="no-orders"><div class="icon">📦</div><p>No orders found</p></div>';return}G.orders.forEach(function(o){var statusClass=o.fulfillment==="FULFILLED"?"fulfilled":o.fulfillment==="UNFULFILLED"?"unfulfilled":"pending";var linesHtml=o.lines.map(function(l){return'<div class="order-line">'+l.qty+'x "'+l.title+'"</div>'}).join("");var div=document.createElement("div");div.className="order-card";div.innerHTML='<div class="order-top"><span class="order-id">'+o.id+'</span><span class="order-status '+statusClass+'">'+o.fulfillment+"</span></div>"+linesHtml+'<div class="order-total">$'+o.total.toFixed(2)+"</div>";$("ordersList").appendChild(div)})}
